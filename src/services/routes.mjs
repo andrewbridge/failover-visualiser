@@ -1,11 +1,14 @@
 import Route from "../deps/route-parser.mjs";
 import { ref, markRaw, reactive, watchEffect, computed } from "../deps/vue.mjs";
-import Home from "../pages/Home.mjs";
+import SimulatorPage from "../pages/SimulatorPage.mjs";
+import EditorPage from "../pages/EditorPage.mjs";
 
 const defaultPath = '/';
 const defaultHash = '#' + defaultPath;
 export const routes = {
-    '/': Home,
+    '/': SimulatorPage,
+    '/editor': EditorPage,
+    '/editor/:configId': EditorPage,
 }
 
 const compiledRoutes = Object.entries(routes).map(([spec, component]) => ({ route: new Route(spec), spec, component }));
