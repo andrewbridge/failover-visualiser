@@ -1,7 +1,16 @@
 import { computeEdgePath, computeEdgeLabelPos } from "../utilities/layout.mjs";
+import { css } from "../deps/goober.mjs";
 
 const EDGE_STROKE_WIDTH = 3;
 const EDGE_HIT_AREA_WIDTH = 15;
+
+const edgeFlowingClass = css`
+    stroke-dasharray: 10 5;
+    animation: flowAnimation 0.5s linear infinite;
+    @keyframes flowAnimation {
+        to { stroke-dashoffset: -15; }
+    }
+`;
 
 export default {
     name: 'EdgePath',
@@ -30,7 +39,7 @@ export default {
             return this.flowStatus === 'inactive' ? 0.4 : 1;
         },
         cssClass() {
-            return this.flowStatus === 'flowing' ? 'edge-flowing' : '';
+            return this.flowStatus === 'flowing' ? edgeFlowingClass : '';
         },
         labelPos() {
             return computeEdgeLabelPos(this.fromNode, this.toNode, this.config.fromPoint, this.config.toPoint, this.config.labelPosition);

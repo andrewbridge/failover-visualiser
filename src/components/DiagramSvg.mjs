@@ -143,17 +143,6 @@ export default {
     template: `<div class="${styles.container}">
         <svg :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg" width="100%"
              style="display: block; min-height: 300px;">
-            <defs>
-                <style>
-                    @keyframes flowAnimation {
-                        to { stroke-dashoffset: -20; }
-                    }
-                    .edge-flowing {
-                        stroke-dasharray: 10 5;
-                        animation: flowAnimation 0.5s linear infinite;
-                    }
-                </style>
-            </defs>
             <ZoneBox
                 v-for="(zone, zoneId) in topology.zones"
                 :key="zoneId"
