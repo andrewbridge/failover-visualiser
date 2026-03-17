@@ -1,9 +1,12 @@
 export const dbPromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open('failover-visualiser', 1);
+    const request = indexedDB.open('failover-visualiser', 2);
     request.onupgradeneeded = function(event) {
         const db = event.target.result;
         if (!db.objectStoreNames.contains('configs')) {
             db.createObjectStore('configs', { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains('scenarios')) {
+            db.createObjectStore('scenarios', { keyPath: 'id' });
         }
     };
     request.onsuccess = function(event) {
