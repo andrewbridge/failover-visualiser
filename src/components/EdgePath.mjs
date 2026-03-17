@@ -67,6 +67,16 @@ export default {
             stroke-width="${EDGE_HIT_AREA_WIDTH}"
             stroke-linecap="round"
         />
+        <text
+            v-if="config.label"
+            :x="labelPos.x"
+            :y="labelPos.y - 10"
+            text-anchor="middle"
+            font-size="10"
+            fill="#667382"
+            font-family="system-ui, -apple-system, sans-serif"
+            style="pointer-events: none"
+        >{{ config.label }}</text>
         <g v-if="showBadge">
             <rect
                 :x="labelPos.x - badgeWidth / 2"

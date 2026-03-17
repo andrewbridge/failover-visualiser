@@ -12,7 +12,6 @@ const SVG_PADDING = 40;
 const styles = {
     container: css`
         width: 100%;
-        overflow: hidden;
     `,
 };
 
@@ -55,7 +54,8 @@ export default {
                 maxX = Math.max(maxX, n.x + NODE_WIDTH);
                 maxY = Math.max(maxY, n.y + NODE_HEIGHT);
             }
-            const pad = SVG_PADDING + ZONE_PADDING + ZONE_LABEL_HEIGHT;
+            const maxDepth = this.maxZoneNestingDepth(this.topology.zones || {});
+            const pad = SVG_PADDING + ZONE_PADDING + ZONE_LABEL_HEIGHT + (maxDepth * (ZONE_PADDING + ZONE_LABEL_HEIGHT));
             return `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
         },
         nodeEntries() {
@@ -69,6 +69,16 @@ export default {
         },
     },
     methods: {
+        maxZoneNestingDepth(zones) {
+            let max = 0;
+            for (const zone of Object.values(zones)) {
+                const childDepth = zone.zones && Object.keys(zone.zones).length > 0
+                    ? 1 + this.maxZoneNestingDepth(zone.zones)
+                    : 0;
+                max = Math.max(max, childDepth);
+            }
+            return max;
+        },
         getNodeState(nodeId) {
             return this.scenario.getState(nodeId);
         },
@@ -131,7 +141,7 @@ export default {
         },
     },
     template: `<div class="${styles.container}">
-        <svg :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
+        <svg :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg" width="100%"
              style="display: block; min-height: 300px;">
             <defs>
                 <style>
