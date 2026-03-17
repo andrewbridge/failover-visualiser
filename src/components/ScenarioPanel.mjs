@@ -51,7 +51,7 @@ export default {
     emits: ['duplicate', 'remove', 'change-config'],
     computed: {
         flowResult() {
-            return resolveFlow(this.topology, this.scenario.stateOverrides);
+            return resolveFlow(this.topology, this.scenario.stateOverrides, { routeMode: this.scenario.routeMode });
         },
         hasMultipleConfigs() {
             return this.configs.length > 1;
@@ -73,6 +73,14 @@ export default {
                     <option v-for="c in configs" :key="c.id" :value="c.id">{{ c.name }}</option>
                 </select>
                 <div class="btn-list flex-nowrap ms-auto">
+                    <button
+                        class="btn btn-sm"
+                        :class="scenario.routeMode === 'all-viable' ? 'btn-secondary' : 'btn-ghost-secondary'"
+                        @click="scenario.routeMode = scenario.routeMode === 'first-viable' ? 'all-viable' : 'first-viable'"
+                        :title="scenario.routeMode === 'first-viable' ? 'Showing first viable route — click to show all viable routes' : 'Showing all viable routes — click to show first viable route only'"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 18m-2 0a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M7 6m-2 0a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M17 6m-2 0a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M7 8v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2 -2v-2" /><path d="M12 12l0 4" /></svg>
+                    </button>
                     <button class="btn btn-ghost-secondary btn-sm" @click="scenario.reset()" title="Reset">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
                     </button>

@@ -84,7 +84,8 @@ function isNodeBlockedByZone(nodeId, nodeZoneAncestry, stateOverrides, topology,
  *   activeRouteLabel: string|null
  * }}
  */
-export function resolveFlow(topology, stateOverrides) {
+export function resolveFlow(topology, stateOverrides, options = {}) {
+    const { routeMode = 'first-viable' } = options;
     const edgeLookup = buildEdgeLookup(topology.edges);
     const nodeZoneAncestry = buildNodeZoneAncestry(topology.zones);
     const flatZoneMap = flattenZones(topology.zones);
@@ -206,8 +207,16 @@ export function resolveFlow(topology, stateOverrides) {
         }
     }
 
-    // Mark active route as flowing (overrides blocked)
-    if (activeRoute) {
+    // Mark flowing routes (overrides blocked)
+    if (routeMode === 'all-viable') {
+        for (const { routeBlocked, routeInactive, routeNodes, routeEdges } of routeResults) {
+            if (!routeBlocked && !routeInactive) {
+                for (const id of [...routeNodes, ...routeEdges]) {
+                    flowSegments.set(id, "flowing");
+                }
+            }
+        }
+    } else if (activeRoute) {
         const activeResult = routeResults.find(r => r.route === activeRoute);
         for (const id of [...activeResult.routeNodes, ...activeResult.routeEdges]) {
             flowSegments.set(id, "flowing");

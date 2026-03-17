@@ -43,13 +43,14 @@ function resolveTopology(topologyOrGetter) {
  * @param {Object} [initialOverrides={}] - Optional starting state overrides
  * @returns {Object} Reactive scenario object
  */
-export function createScenario(topologyOrGetter, name, initialOverrides = {}) {
+export function createScenario(topologyOrGetter, name, initialOverrides = {}, initialRouteMode = 'first-viable') {
     const getTopo = () => resolveTopology(topologyOrGetter);
 
     return reactive({
         id: nextId++,
         name,
         stateOverrides: { ...initialOverrides },
+        routeMode: initialRouteMode,
 
         getState(id) {
             if (this.stateOverrides[id]) return this.stateOverrides[id];
@@ -83,7 +84,7 @@ export function createScenario(topologyOrGetter, name, initialOverrides = {}) {
         },
 
         clone(newName) {
-            return createScenario(topologyOrGetter, newName, { ...this.stateOverrides });
+            return createScenario(topologyOrGetter, newName, { ...this.stateOverrides }, this.routeMode);
         },
     });
 }
