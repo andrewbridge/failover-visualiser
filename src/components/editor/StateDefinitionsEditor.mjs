@@ -92,6 +92,7 @@ export default {
                     :value="def.flow"
                     @change="onUpdate(key, 'flow', $event.target.value)">
                 <option value="pass">Pass</option>
+                <option value="inactive">Inactive</option>
                 <option value="block">Block</option>
             </select>
             <button class="btn btn-sm btn-outline-danger ${styles.removeBtn}" @click="onRemove(key)"

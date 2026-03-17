@@ -97,6 +97,7 @@ export function resolveFlow(topology, stateOverrides) {
 
     for (const route of sortedRoutes) {
         let routeBlocked = false;
+        let routeInactive = false;
         let routeDegraded = false;
         const routeNodes = [];
         const routeEdges = [];
@@ -114,6 +115,8 @@ export function resolveFlow(topology, stateOverrides) {
             if (stateDef) {
                 if (stateDef.flow === "block") {
                     routeBlocked = true;
+                } else if (stateDef.flow === "inactive") {
+                    routeInactive = true;
                 } else if (stateDef.colour === "#f76707") {
                     routeDegraded = true;
                 }
@@ -135,15 +138,17 @@ export function resolveFlow(topology, stateOverrides) {
             if (stateDef) {
                 if (stateDef.flow === "block") {
                     routeBlocked = true;
+                } else if (stateDef.flow === "inactive") {
+                    routeInactive = true;
                 } else if (stateDef.colour === "#f76707") {
                     routeDegraded = true;
                 }
             }
         }
 
-        routeResults.push({ route, routeBlocked, routeDegraded, routeNodes, routeEdges });
+        routeResults.push({ route, routeBlocked, routeInactive, routeDegraded, routeNodes, routeEdges });
 
-        if (!routeBlocked && !activeRoute) {
+        if (!routeBlocked && !routeInactive && !activeRoute) {
             activeRoute = route;
             activeRouteIsDegraded = routeDegraded;
         }
@@ -160,8 +165,8 @@ export function resolveFlow(topology, stateOverrides) {
         flowSegments.set(edgeId, "inactive");
     }
 
-    // Mark blocked routes
-    for (const { route, routeBlocked, routeNodes, routeEdges } of routeResults) {
+    // Mark blocked routes — routeInactive routes leave segments at their default "inactive"
+    for (const { routeBlocked, routeNodes, routeEdges } of routeResults) {
         if (routeBlocked) {
             for (const id of [...routeNodes, ...routeEdges]) {
                 if (flowSegments.get(id) !== "flowing") {
