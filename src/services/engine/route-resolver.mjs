@@ -165,12 +165,42 @@ export function resolveFlow(topology, stateOverrides) {
         flowSegments.set(edgeId, "inactive");
     }
 
-    // Mark blocked routes — routeInactive routes leave segments at their default "inactive"
-    for (const { routeBlocked, routeNodes, routeEdges } of routeResults) {
-        if (routeBlocked) {
-            for (const id of [...routeNodes, ...routeEdges]) {
-                if (flowSegments.get(id) !== "flowing") {
-                    flowSegments.set(id, "blocked");
+    // Mark blocked routes — only mark elements that are themselves the source of blocking.
+    // Healthy nodes that feed into a blocked node remain "inactive", not "blocked".
+    // routeInactive routes leave all segments at their default "inactive".
+    for (const { routeBlocked, route } of routeResults) {
+        if (!routeBlocked) continue;
+
+        // Identify which nodes in this route are actually blocked
+        const blockedNodeIds = new Set();
+        for (const nodeId of route.path) {
+            const blockedByZone = isNodeBlockedByZone(nodeId, nodeZoneAncestry, stateOverrides, topology, flatZoneMap);
+            const stateName = getEffectiveState(nodeId, stateOverrides, topology, {});
+            const stateDef = topology.stateDefinitions[stateName];
+            if (blockedByZone || (stateDef && stateDef.flow === "block")) {
+                blockedNodeIds.add(nodeId);
+            }
+        }
+
+        // Mark blocked nodes
+        for (const nodeId of blockedNodeIds) {
+            if (flowSegments.get(nodeId) !== "flowing") {
+                flowSegments.set(nodeId, "blocked");
+            }
+        }
+
+        // Mark edges: blocked only if their source node is blocked, or the edge itself is blocked
+        for (let i = 0; i < route.path.length - 1; i++) {
+            const fromId = route.path[i];
+            const toId = route.path[i + 1];
+            const edgeId = edgeLookup.get(`${fromId}->${toId}`);
+            if (!edgeId) continue;
+
+            const stateName = getEffectiveState(edgeId, stateOverrides, topology, flatZoneMap);
+            const stateDef = topology.stateDefinitions[stateName];
+            if (blockedNodeIds.has(fromId) || (stateDef && stateDef.flow === "block")) {
+                if (flowSegments.get(edgeId) !== "flowing") {
+                    flowSegments.set(edgeId, "blocked");
                 }
             }
         }
