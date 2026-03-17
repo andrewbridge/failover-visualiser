@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "serve": "npx simplehttpserver -p 8080 .",
+    "dev": "npx live-server src --port 8080 --no-browser",
+    "list-source-files": "find ./src -type f | sed 's/\\.\\/src//g'"
+  }
+}

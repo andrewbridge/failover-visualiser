@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="favicon.ico">
+  <meta name="theme-color" content="#ffffff">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      min-height: 100vh !important;
+      height: auto !important;
+      font-family: serif;
+    }
+
+    .has-bottom-nav {
+      padding-bottom: 60px;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+</head>
+<body>
+  <div id="root">
+    <div class=" d-flex flex-column">
+      <div class="page my-auto">
+        <div class="container container-slim py-4">
+          <div class="text-center">
+            <div class="text-secondary mb-3">Loading...</div>
+            <div class="progress progress-sm">
+              <div class="progress-bar progress-bar-indeterminate"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="teleport-root"></div>
+  <div id="teleport-footer"></div>
+  <script src="index.mjs" type="module"></script>
+</body>
+</html>
